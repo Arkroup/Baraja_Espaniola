@@ -213,7 +213,7 @@ SMODS.Joker {
 		end
     end,
 	calculate = function(self, card, context)
-		if context.before and next(context.poker_hands['Flush']) then -- The crash is here. If I change it to context.scoring_name == 'High Card' instead it grows for every single card in the screen twice for some reason
+		if context.before and next(context.poker_hands['Flush']) then 
 			card.ability.extra.Xmult = card.ability.extra.Xmult + card.ability.extra.Xmult_gain
 			return {
 				message = 'Upgraded!',
@@ -297,6 +297,34 @@ SMODS.Joker({
 					card = card
 				}
             end
+        end
+    end
+})
+
+SMODS.Joker({
+	key = "cartas",
+	atlas = "BarajaEspaniolaJokers",
+	loc_txt = {
+		name = 'Cartas',
+		text = {
+			"{C:chips}+#1#{} Chips for each",
+			"card above {C:attention}#3#{}",
+			"in your full deck",
+			"{C:inactive}(Currently {C:chips}+#2#{C:inactive} Chips)",
+		}
+	},
+	pos = {x = 8, y = 0},
+	rarity = 1,
+	cost = 4,
+	config = {extra = { chips_per_card = 20 }},
+	loc_vars = function(self, info_queue, card)
+        return {vars = {card.ability.extra.chips_per_card, math.max(0,card.ability.extra.chips_per_card*(G.playing_cards and (#G.playing_cards - G.GAME.starting_deck_size) or 0)), G.GAME.starting_deck_size}}
+    end,
+    calculate = function(self, card, context)
+        if context.joker_main and (#G.playing_cards - G.GAME.starting_deck_size) > 0 then
+            return {
+                chips = card.ability.extra.chips_per_card*(#G.playing_cards - G.GAME.starting_deck_size),
+            }
         end
     end
 })
