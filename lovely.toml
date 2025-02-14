@@ -19,8 +19,9 @@ function get_flush(hand)
   local ret = {}
   local four_fingers = next(find_joker('Four Fingers'))
   local envido = next(SMODS.find_card('j_spdeck_envido'))
+  local envido2 = next(SMODS.find_card('j_spdeck_envido2'))
   local suits = SMODS.Suit.obj_buffer
-  if #hand < (5 - (four_fingers and 1 or envido and 3 or 0 )) then return ret else
+  if #hand < (5 - (four_fingers and 1 or envido and 3 or envido2 and 3 or 0)) then return ret else
 '''
 match_indent = true
 times = 1
@@ -33,7 +34,7 @@ if flush_count >= (5 - (four_fingers and 1 or 0)) then
 '''
 position = "at"
 payload = '''
-if flush_count >= (5 - (four_fingers and 1 or 0)) or flush_count == (envido and 2) then
+if flush_count >= (5 - (four_fingers and 1 or 0)) or flush_count == (envido and 2 or envido2 and 2) then
 '''
 match_indent = true
 times = 1

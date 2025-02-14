@@ -49,15 +49,12 @@ SMODS.Joker {
         text = {
 			'You can play {C:attention}flush{} with {C:attention}2{} cards. ',
 			'If doing so, add {X:mult}Mult{} equal to',
-			'{X:mult}20{} + sum of ranks',
-			'of numbered cards in scoring hand.'
+			'{X:mult}20{} + sum of ranks of',
+			'numbered cards in scoring hand.'
 		}
     },
     atlas = 'BarajaEspaniolaJokers',
-    pos = {
-        x = 0,
-        y = 0
-    },
+    pos = { x = 0, y = 0 },
     rarity = 1,
     blueprint_compat = false,
     cost = 6,
@@ -81,3 +78,72 @@ SMODS.Joker {
 		end
 	end,
 }
+
+SMODS.Joker {
+	key = 'envido2',
+	loc_txt = {
+		name = 'Envido Envido',
+		text = {
+			'You can play {C:attention}flush{} with {C:attention}2{} cards. ',
+			'If doing so, {X:mult}X#1#{} Mult.',
+			'Increase by 0.1 per flush played.'
+		}
+	},
+	config = { extra = { Xmult = 1, Xmult_gain = 0.1 } },
+	rarity = 2,
+	atlas = 'BarajaEspaniolaJokers',
+	pos = { x = 1, y = 0 },
+	cost = 5,
+	loc_vars = function(self, info_queue, card)
+		return { vars = { card.ability.extra.Xmult, card.ability.extra.Xmult_gain } }
+	end,
+	calculate = function(self, card, context)	
+		if context.joker_main then
+			return {
+				x_mult = card.ability.extra.Xmult,
+			}
+		end
+		if context.before and next(context.poker_hands['Flush']) and not context.blueprint then
+			card.ability.extra.Xmult = card.ability.extra.Xmult + card.ability.extra.Xmult_gain
+			return {
+				message = 'Upgraded!',
+				colour = G.C.MULT,
+				card = card
+			}
+		end
+	end
+}
+
+SMODS.Joker({
+	key = "setenta",
+	atlas = "BarajaEspaniolaJokers",
+	loc_txt = {
+		name = 'Setenta',
+		text = {
+			'Retrigger every {C:attention}7{} once for each',
+			'previously scored {C:attention}7{} this hand.'
+		}
+	},
+	pos = { x = 2, y = 0 },
+	rarity = 2,
+	cost = 6,
+	config = { extra = { repetitions = -1, repetitions_gain = 1 } },
+	loc_vars = function(self, info_queue, card)
+		return {vars = {card.ability.extra.repetitions, card.ability.extra.repetitions_gain}}
+	end,
+	calculate = function(self, card, context)
+		if context.before then
+            card.ability.extra.repetitions = -1
+        end
+		if context.cardarea == G.play and context.repetition and not context.repetition_only then
+			if context.other_card.base.id == 7 then
+				card.ability.extra.repetitions = card.ability.extra.repetitions + card.ability.extra.repetitions_gain
+				return {
+					message = 'Again!',
+					repetitions = card.ability.extra.repetitions,
+					card = context.other_card
+				}
+			end
+		end
+    end
+})
