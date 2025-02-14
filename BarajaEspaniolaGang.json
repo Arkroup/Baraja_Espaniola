@@ -1,0 +1,16 @@
+{
+	"id": "Baraja_Espaniola_Gang",
+	"name": "Baraja Española Gang",
+	"display_name": "Española Gang",
+	"author": ["Artemys", "Artemis_w"],
+	"description": "A mod adding jokers themed around spanish deck based games",
+	"prefix": "spdeck",
+	"main_file": "BarajaEspaniolaGang.lua",
+	"priority": 0,
+	"badge_colour": "cceb07",
+	"badge_text_colour": "FFFFFF",
+	"version": "0.1",
+	"dependencies": [
+		"Steamodded (>=1.0.0~ALPHA-1410d)"
+	]
+}
