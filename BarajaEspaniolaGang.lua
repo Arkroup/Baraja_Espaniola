@@ -94,7 +94,7 @@ SMODS.Joker {
 		text = {
 			'You can play {C:attention}flush{} with {C:attention}2{} cards.',
 			'If doing so, {X:mult}X#1#{} Mult.',
-			'Increase by 0.1 per flush played.'
+			'Increase by 0.1 per {C:attention}flush{} played.'
 		}
 	},
 	config = { extra = { Xmult = 1, Xmult_gain = 0.1 } },
@@ -236,7 +236,7 @@ SMODS.Joker{
 		name = 'Oros',
 		text = {
 			"{X:mult}X#1#{} Mult. Increases by X0.1",
-			"per diamond card in full deck."
+			"per {C:diamonds}diamond{} card in full deck."
 		}
 	},
 	rarity = 1,
@@ -261,3 +261,42 @@ SMODS.Joker{
 		end
 	end,
 }
+
+SMODS.Joker({
+	key = "retruco",
+	atlas = "BarajaEspaniolaJokers",
+	loc_txt = {
+		name = 'Retruco',
+		text = {
+			"When playing high card,",
+			"retrigger scoring card for",
+			"every {C:attention}ace{} and {C:attention}7{} held in hand."
+		}
+	},
+	pos = {x = 7, y = 0},
+	rarity = 2,
+	cost = 6,
+	config = {extra = { repetitions = 0 }},
+	loc_vars = function(self, info_queue, card)
+		return {vars = {card.ability.extra.repetitions}}
+	end,
+    calculate = function(self, card, context)
+        if context.repetition and context.cardarea == G.play then
+			card.ability.extra.repetitions = 0
+            if context.scoring_name == 'High Card' then
+				for i,v in pairs(G.hand.cards) do
+					if v:get_id() == 14 or v:get_id() == 7 then
+						if v.ability.effect ~= 'Stone Card' then
+                			card.ability.extra.repetitions = card.ability.extra.repetitions + 1
+						end
+					end
+				end
+				return {
+					message = localize('k_again_ex'),
+					repetitions = card.ability.extra.repetitions,
+					card = card
+				}
+            end
+        end
+    end
+})
