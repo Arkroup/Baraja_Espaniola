@@ -64,11 +64,19 @@ SMODS.Joker {
 	end,
 	calculate = function(self, card, context)
 		if context.individual and context.cardarea == G.play and next(context.poker_hands[card.ability.extra.hand_type]) and #context.scoring_hand == 2 and context.other_card:is_numbered() then
-			return {
-				mult_mod = context.other_card:get_id(),
-				message = localize { type = 'variable', key = 'a_mult', vars = { context.other_card:get_id() } },
-				card = context.other_card
-			}
+			if context.other_card:get_id() == 14 then
+				return{
+					mult_mod = 1,
+					message = localize { type = 'variable', key = 'a_mult', vars = { 1 } },
+					card = context.other_card
+				}
+			else
+				return {
+					mult_mod = context.other_card:get_id(),
+					message = localize { type = 'variable', key = 'a_mult', vars = { context.other_card:get_id() } },
+					card = context.other_card
+				}
+			end
 		end
 		if context.joker_main and next(context.poker_hands[card.ability.extra.hand_type]) and #context.scoring_hand == 2 then
 			return {
@@ -76,7 +84,7 @@ SMODS.Joker {
 				message = localize { type = 'variable', key = 'a_mult', vars = { card.ability.extra.mult } }
 			}
 		end
-	end,
+	end
 }
 
 SMODS.Joker {
@@ -92,7 +100,7 @@ SMODS.Joker {
 	config = { extra = { Xmult = 1, Xmult_gain = 0.1 } },
 	rarity = 2,
 	atlas = 'BarajaEspaniolaJokers',
-	pos = { x = 1, y = 0 },
+	pos = { x = 2, y = 0 },
 	cost = 5,
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.Xmult, card.ability.extra.Xmult_gain } }
@@ -124,7 +132,7 @@ SMODS.Joker({
 			'previously scored {C:attention}7{} this hand.'
 		}
 	},
-	pos = { x = 2, y = 0 },
+	pos = { x = 1, y = 0 },
 	rarity = 2,
 	cost = 6,
 	config = { extra = { repetitions = -1, repetitions_gain = 1 } },
@@ -147,3 +155,34 @@ SMODS.Joker({
 		end
     end
 })
+
+SMODS.Joker {
+	key = 'vale4',
+	loc_txt = {
+		name = 'Vale 4',
+		text = {
+			"If played hand is {C:attention}high card{},",
+			"and card is an {C:attention}Ace{},",
+			"{C:attention}7{}, {C:attention}3{} or {C:attention}2{}, {X:mult}X#1#{} Mult."
+		}
+	},
+	rarity = 3,
+	atlas = 'BarajaEspaniolaJokers',
+	pos = { x = 3, y = 0 },
+	cost = 4,
+	config = { extra = { Xmult = 4 } },
+    loc_vars = function(self, info_queue, card)
+        return { vars = { card.ability.extra.Xmult } }
+    end,
+    calculate = function(self, card, context)
+        if context.joker_main then
+            if context.scoring_name == 'High Card' then
+                if context.scoring_hand[1]:get_id() == 14 or context.scoring_hand[1]:get_id() == 7 or context.scoring_hand[1]:get_id() == 3 or context.scoring_hand[1]:get_id() == 2 then
+                    return {
+                        x_mult = card.ability.extra.Xmult
+                    }
+                end
+            end
+        end
+    end
+}
