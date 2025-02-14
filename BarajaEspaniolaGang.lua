@@ -228,3 +228,36 @@ SMODS.Joker {
 		end
 	end
 }
+
+SMODS.Joker{
+	key = "oros",
+	atlas = "BarajaEspaniolaJokers",
+	loc_txt = {
+		name = 'Oros',
+		text = {
+			"{X:mult}X#1#{} Mult. Increases by X0.1",
+			"per diamond card in full deck."
+		}
+	},
+	rarity = 1,
+	blueprint_compat = true,
+	pos = {x = 6, y = 0},
+	cost = 5,
+	config = {extra = {Xmult = 1, Xmult_gain = 0.1}},
+	loc_vars = function(self, info_queue, card)
+		return {vars = {card.ability.extra.Xmult, card.ability.extra.Xmult_gain}}
+	end,
+	calculate = function(self, card, context)
+		if context.joker_main then
+			card.ability.extra.Xmult = 1
+       		for i,v in pairs(G.playing_cards) do
+     	       if v:is_suit("Diamonds") then
+      	        card.ability.extra.Xmult = card.ability.extra.Xmult + card.ability.extra.Xmult_gain
+     	       end
+      	  	end
+			return {
+				x_mult = card.ability.extra.Xmult,
+			}
+		end
+	end,
+}
