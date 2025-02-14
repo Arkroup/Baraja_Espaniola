@@ -24,7 +24,7 @@ SMODS.Joker {
 	config = { extra = { Xmult = 2} },
 	rarity = 1,
 	atlas = 'BarajaEspaniolaJokers',
-	pos = { x = 1, y = 1 },
+	pos = { x = 2, y = 0 },
 	cost = 4,
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.Xmult } }
@@ -100,13 +100,13 @@ SMODS.Joker {
 	config = { extra = { Xmult = 1, Xmult_gain = 0.1 } },
 	rarity = 2,
 	atlas = 'BarajaEspaniolaJokers',
-	pos = { x = 2, y = 0 },
+	pos = { x = 3, y = 0 },
 	cost = 5,
 	loc_vars = function(self, info_queue, card)
 		return { vars = { card.ability.extra.Xmult, card.ability.extra.Xmult_gain } }
 	end,
 	calculate = function(self, card, context)	
-		if context.joker_main then
+		if context.joker_main and next(context.poker_hands['Flush']) and #context.scoring_hand == 2 then
 			return {
 				x_mult = card.ability.extra.Xmult,
 			}
@@ -168,7 +168,7 @@ SMODS.Joker {
 	},
 	rarity = 3,
 	atlas = 'BarajaEspaniolaJokers',
-	pos = { x = 3, y = 0 },
+	pos = { x = 4, y = 0 },
 	cost = 4,
 	config = { extra = { Xmult = 4 } },
     loc_vars = function(self, info_queue, card)
