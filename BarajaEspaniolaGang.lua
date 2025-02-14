@@ -47,7 +47,7 @@ SMODS.Joker {
     loc_txt = {
         name = 'Envido',
         text = {
-			'You can play {C:attention}flush{} with {C:attention}2{} cards. ',
+			'You can play {C:attention}flush{} with {C:attention}2{} cards.',
 			'If doing so, add {X:mult}Mult{} equal to',
 			'{X:mult}20{} + sum of ranks of',
 			'numbered cards in scoring hand.'
@@ -92,7 +92,7 @@ SMODS.Joker {
 	loc_txt = {
 		name = 'Envido Envido',
 		text = {
-			'You can play {C:attention}flush{} with {C:attention}2{} cards. ',
+			'You can play {C:attention}flush{} with {C:attention}2{} cards.',
 			'If doing so, {X:mult}X#1#{} Mult.',
 			'Increase by 0.1 per flush played.'
 		}
@@ -185,4 +185,46 @@ SMODS.Joker {
             end
         end
     end
+}
+
+SMODS.Joker {
+	key = 'faltaEnvido',
+	loc_txt = {
+		name = 'Falta Envido',
+		text = {
+			"You can play {C:attention}flush{} with {C:attention}2{} cards.",
+			"If doing so, {X:mult}X#1#{} Mult,",
+			"increase by 0.15 per {C:attention}flush{} played this game."
+		}
+	},
+	rarity = 3,
+	atlas = 'BarajaEspaniolaJokers',
+	pos = { x = 5, y = 0 },
+	cost = 4,
+	config = { extra = { Xmult = 1, Xmult_gain = 0.15 } },
+	loc_vars = function(self, info_queue, card)
+		return { vars = { card.ability.extra.Xmult, card.ability.extra.Xmult_gain } }
+	end,
+	set_ability = function(self, card, initial, delay_sprites)
+		if G.GAME and G.GAME.hand_usage then
+			card.ability.extra.Xmult = 1 + G.GAME.hands["Flush"].played * card.ability.extra.Xmult_gain
+		else
+			card.ability.extra.Xmult = 1
+		end
+    end,
+	calculate = function(self, card, context)
+		if context.before and next(context.poker_hands['Flush']) then -- The crash is here. If I change it to context.scoring_name == 'High Card' instead it grows for every single card in the screen twice for some reason
+			card.ability.extra.Xmult = card.ability.extra.Xmult + card.ability.extra.Xmult_gain
+			return {
+				message = 'Upgraded!',
+				colour = G.C.MULT,
+				card = card
+			}
+		end
+		if context.joker_main and next(context.poker_hands['Flush']) and #context.scoring_hand == 2 then
+			return {
+				x_mult = card.ability.extra.Xmult,
+			}
+		end
+	end
 }
